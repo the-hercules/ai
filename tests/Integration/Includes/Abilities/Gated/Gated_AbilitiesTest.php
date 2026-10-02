@@ -9,17 +9,17 @@ namespace WordPress\AI\Tests\Integration\Includes\Abilities\Gated;
 
 use RuntimeException;
 use WP_UnitTestCase;
+use WordPress\AI\Abilities\Gated\Content_Query;
 use WordPress\AI\Abilities\Gated\Gated_Abilities;
 use WordPress\AI\Abilities\Gated\Post_Utilities;
-use WordPress\AI\Abilities\Gated\Read_Content;
 use WordPress\AI\Abilities\Gated\Read_Settings;
-use WordPress\AI\Abilities\Gated\Read_Users;
+use WordPress\AI\Abilities\Gated\Users_Query;
 use WordPress\AI\Abstracts\Abstract_Gated_Ability;
 
 /**
  * A valid gated ability used to exercise the registry filter.
  *
- * @since x.x.x
+ * @since 1.3.0
  */
 final class Test_Valid_Gated_Ability extends Abstract_Gated_Ability {
 	/**
@@ -32,7 +32,7 @@ final class Test_Valid_Gated_Ability extends Abstract_Gated_Ability {
  * A gated ability whose constructor throws, used to exercise the registry's
  * instantiation guard.
  *
- * @since x.x.x
+ * @since 1.3.0
  */
 final class Test_Throwing_Gated_Ability extends Abstract_Gated_Ability {
 	/**
@@ -53,14 +53,14 @@ final class Test_Throwing_Gated_Ability extends Abstract_Gated_Ability {
 /**
  * Gated_Abilities registry test case.
  *
- * @since x.x.x
+ * @since 1.3.0
  */
 class Gated_AbilitiesTest extends WP_UnitTestCase {
 
 	/**
 	 * Tests that get_all() returns the default gated ability instances.
 	 *
-	 * @since x.x.x
+	 * @since 1.3.0
 	 */
 	public function test_get_all_returns_default_gated_abilities(): void {
 		$abilities = Gated_Abilities::get_all();
@@ -74,14 +74,14 @@ class Gated_AbilitiesTest extends WP_UnitTestCase {
 		$classes = array_map( 'get_class', $abilities );
 		$this->assertContains( Post_Utilities::class, $classes );
 		$this->assertContains( Read_Settings::class, $classes );
-		$this->assertContains( Read_Users::class, $classes );
-		$this->assertContains( Read_Content::class, $classes );
+		$this->assertContains( Users_Query::class, $classes );
+		$this->assertContains( Content_Query::class, $classes );
 	}
 
 	/**
 	 * Tests that each gated ability reports the expected core-object-exposure need.
 	 *
-	 * @since x.x.x
+	 * @since 1.3.0
 	 */
 	public function test_gated_abilities_report_expected_core_object_exposure(): void {
 		$exposure = array();
@@ -90,15 +90,15 @@ class Gated_AbilitiesTest extends WP_UnitTestCase {
 		}
 
 		$this->assertTrue( $exposure[ Read_Settings::class ], 'read-settings depends on core-object exposure.' );
-		$this->assertTrue( $exposure[ Read_Content::class ], 'read-content depends on core-object exposure.' );
+		$this->assertTrue( $exposure[ Content_Query::class ], 'content-query depends on core-object exposure.' );
 		$this->assertFalse( $exposure[ Post_Utilities::class ], 'post utilities do not depend on core-object exposure.' );
-		$this->assertFalse( $exposure[ Read_Users::class ], 'read-users does not depend on core-object exposure.' );
+		$this->assertFalse( $exposure[ Users_Query::class ], 'users-query does not depend on core-object exposure.' );
 	}
 
 	/**
 	 * Tests that the wpai_gated_abilities filter can add a gated ability.
 	 *
-	 * @since x.x.x
+	 * @since 1.3.0
 	 */
 	public function test_filter_can_add_a_gated_ability(): void {
 		$callback = static function ( array $classes ): array {
@@ -117,14 +117,14 @@ class Gated_AbilitiesTest extends WP_UnitTestCase {
 	/**
 	 * Tests that the wpai_gated_abilities filter can remove a gated ability.
 	 *
-	 * @since x.x.x
+	 * @since 1.3.0
 	 */
 	public function test_filter_can_remove_a_gated_ability(): void {
 		$callback = static function ( array $classes ): array {
 			return array_values(
 				array_filter(
 					$classes,
-					static fn( string $class ): bool => Read_Users::class !== $class
+					static fn( string $class ): bool => Users_Query::class !== $class
 				)
 			);
 		};
@@ -133,14 +133,14 @@ class Gated_AbilitiesTest extends WP_UnitTestCase {
 		$classes = array_map( 'get_class', Gated_Abilities::get_all() );
 		remove_filter( 'wpai_gated_abilities', $callback );
 
-		$this->assertNotContains( Read_Users::class, $classes );
+		$this->assertNotContains( Users_Query::class, $classes );
 		$this->assertCount( 3, $classes );
 	}
 
 	/**
 	 * Tests that duplicate classes are only instantiated once.
 	 *
-	 * @since x.x.x
+	 * @since 1.3.0
 	 */
 	public function test_get_all_dedupes_classes(): void {
 		$callback = static function ( array $classes ): array {
@@ -159,7 +159,7 @@ class Gated_AbilitiesTest extends WP_UnitTestCase {
 	/**
 	 * Tests that non-string entries are skipped.
 	 *
-	 * @since x.x.x
+	 * @since 1.3.0
 	 */
 	public function test_get_all_skips_non_string_entries(): void {
 		$this->setExpectedIncorrectUsage( 'WordPress\AI\Abilities\Gated\Gated_Abilities::get_all' );
@@ -178,7 +178,7 @@ class Gated_AbilitiesTest extends WP_UnitTestCase {
 	/**
 	 * Tests that classes not extending Abstract_Gated_Ability are skipped.
 	 *
-	 * @since x.x.x
+	 * @since 1.3.0
 	 */
 	public function test_get_all_skips_classes_that_are_not_gated_abilities(): void {
 		$this->setExpectedIncorrectUsage( 'WordPress\AI\Abilities\Gated\Gated_Abilities::get_all' );
@@ -197,7 +197,7 @@ class Gated_AbilitiesTest extends WP_UnitTestCase {
 	/**
 	 * Tests that abilities which fail to instantiate are skipped.
 	 *
-	 * @since x.x.x
+	 * @since 1.3.0
 	 */
 	public function test_get_all_skips_uninstantiable_abilities(): void {
 		$this->setExpectedIncorrectUsage( 'WordPress\AI\Abilities\Gated\Gated_Abilities::get_all' );

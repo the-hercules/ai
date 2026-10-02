@@ -20,7 +20,7 @@ use function WordPress\AI\get_min_content_length;
 /**
  * Content Translation WordPress Ability.
  *
- * @since x.x.x
+ * @since 1.3.0
  */
 class Content_Translation extends Abstract_Ability {
 
@@ -28,7 +28,7 @@ class Content_Translation extends Abstract_Ability {
 	 * The default minimum content length for translation.
 	 * One word (~5 characters) is the minimum length for translation.
 	 *
-	 * @since x.x.x
+	 * @since 1.3.0
 	 *
 	 * @var int
 	 */
@@ -38,6 +38,15 @@ class Content_Translation extends Abstract_Ability {
 	 * {@inheritDoc}
 	 *
 	 * @since x.x.x
+	 */
+	protected function guideline_categories(): array {
+		return array( 'site', 'copy', 'additional' );
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 1.3.0
 	 */
 	protected function input_schema(): array {
 		return array(
@@ -66,7 +75,7 @@ class Content_Translation extends Abstract_Ability {
 	/**
 	 * {@inheritDoc}
 	 *
-	 * @since x.x.x
+	 * @since 1.3.0
 	 */
 	protected function output_schema(): array {
 		return array(
@@ -78,7 +87,7 @@ class Content_Translation extends Abstract_Ability {
 	/**
 	 * {@inheritDoc}
 	 *
-	 * @since x.x.x
+	 * @since 1.3.0
 	 */
 	protected function execute_callback( $input ) {
 		// Default arguments for the translation process.
@@ -149,7 +158,7 @@ class Content_Translation extends Abstract_Ability {
 	/**
 	 * {@inheritDoc}
 	 *
-	 * @since x.x.x
+	 * @since 1.3.0
 	 */
 	protected function permission_callback( $args ) {
 		// Ensure the user has permission to edit the post if a post ID is provided.
@@ -194,7 +203,7 @@ class Content_Translation extends Abstract_Ability {
 	/**
 	 * {@inheritDoc}
 	 *
-	 * @since x.x.x
+	 * @since 1.3.0
 	 */
 	protected function meta(): array {
 		return array(
@@ -205,7 +214,7 @@ class Content_Translation extends Abstract_Ability {
 	/**
 	 * Generates translated content using the AI Client.
 	 *
-	 * @since x.x.x
+	 * @since 1.3.0
 	 *
 	 * @param string $prompt The prompt to use for the content translation.
 	 * @param string $language The target language for the translation.
@@ -224,7 +233,7 @@ class Content_Translation extends Abstract_Ability {
 	/**
 	 * Returns a prompt builder for content translation.
 	 *
-	 * @since x.x.x
+	 * @since 1.3.0
 	 *
 	 * @param string $prompt The prompt to build.
 	 * @param string $language The target language.

@@ -43,7 +43,7 @@ class Site_Health_Test_Feature extends Abstract_Feature {
 /**
  * Site_Health test case.
  *
- * @since x.x.x
+ * @since 1.3.0
  */
 class Site_HealthTest extends WP_UnitTestCase {
 
@@ -76,9 +76,8 @@ class Site_HealthTest extends WP_UnitTestCase {
 		remove_all_filters( 'debug_information' );
 		remove_all_filters( 'site_status_tests' );
 		remove_all_filters( 'wpai_has_ai_credentials' );
-		delete_option( Settings_Registration::GLOBAL_OPTION );
+		remove_all_filters( 'wpai_features_enabled' );
 		delete_option( 'wpai_feature_site-health-test-feature_enabled' );
-		unregister_setting( Settings_Registration::OPTION_GROUP, Settings_Registration::GLOBAL_OPTION );
 		unregister_setting( Settings_Registration::OPTION_GROUP, 'wpai_feature_site-health-test-feature_enabled' );
 		unregister_setting( Settings_Registration::OPTION_GROUP, 'wpai_feature_site-health-test-feature_field_developer' );
 		parent::tearDown();
@@ -89,7 +88,7 @@ class Site_HealthTest extends WP_UnitTestCase {
 	/**
 	 * Tests that init() registers the debug_information filter.
 	 *
-	 * @since x.x.x
+	 * @since 1.3.0
 	 */
 	public function test_init_registers_debug_information_filter(): void {
 		$this->site_health->init();
@@ -102,7 +101,7 @@ class Site_HealthTest extends WP_UnitTestCase {
 	/**
 	 * Tests that init() registers the site_status_tests filter.
 	 *
-	 * @since x.x.x
+	 * @since 1.3.0
 	 */
 	public function test_init_registers_site_status_tests_filter(): void {
 		$this->site_health->init();
@@ -117,7 +116,7 @@ class Site_HealthTest extends WP_UnitTestCase {
 	/**
 	 * Tests that the debug information section contains the expected keys.
 	 *
-	 * @since x.x.x
+	 * @since 1.3.0
 	 */
 	public function test_add_debug_information_adds_ai_plugin_section(): void {
 		$info   = array();
@@ -131,7 +130,7 @@ class Site_HealthTest extends WP_UnitTestCase {
 	/**
 	 * Tests that the debug section contains required fields.
 	 *
-	 * @since x.x.x
+	 * @since 1.3.0
 	 */
 	public function test_debug_information_contains_required_fields(): void {
 		$result = $this->site_health->add_debug_information( array() );
@@ -145,23 +144,30 @@ class Site_HealthTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that the ai_enabled field reflects the global toggle option.
+	 * Tests that the ai_enabled field reflects the wpai_features_enabled filter.
 	 *
-	 * @since x.x.x
+	 * @since 1.3.0
 	 */
-	public function test_debug_information_reflects_global_enabled_state(): void {
-		update_option( Settings_Registration::GLOBAL_OPTION, true );
+	public function test_debug_information_reflects_features_enabled_filter(): void {
+		$result = $this->site_health->add_debug_information( array() );
+		$fields = $result['ai-plugin']['fields'];
+
+		$this->assertSame( 'yes', $fields['ai_enabled']['debug'], 'Should default to yes when the filter is untouched.' );
+
+		add_filter( 'wpai_features_enabled', '__return_false' );
 
 		$result = $this->site_health->add_debug_information( array() );
 		$fields = $result['ai-plugin']['fields'];
 
-		$this->assertSame( 'yes', $fields['ai_enabled']['debug'] );
+		$this->assertSame( 'no', $fields['ai_enabled']['debug'], 'Should report no when the filter disables features.' );
+
+		remove_filter( 'wpai_features_enabled', '__return_false' );
 	}
 
 	/**
 	 * Tests that the debug section shows the correct features-enabled count.
 	 *
-	 * @since x.x.x
+	 * @since 1.3.0
 	 */
 	public function test_debug_information_counts_enabled_features(): void {
 		update_option( 'wpai_feature_site-health-test-feature_enabled', true );
@@ -176,7 +182,7 @@ class Site_HealthTest extends WP_UnitTestCase {
 	 * Tests that the debug information does NOT contain any API key or token
 	 * values even when they might be present in the environment.
 	 *
-	 * @since x.x.x
+	 * @since 1.3.0
 	 */
 	public function test_debug_information_does_not_expose_credentials(): void {
 		$result      = $this->site_health->add_debug_information( array() );
@@ -203,7 +209,7 @@ class Site_HealthTest extends WP_UnitTestCase {
 	/**
 	 * Tests that add_status_tests() injects the credentials test.
 	 *
-	 * @since x.x.x
+	 * @since 1.3.0
 	 */
 	public function test_add_status_tests_injects_credentials_test(): void {
 		$tests  = array( 'direct' => array() );
@@ -216,7 +222,7 @@ class Site_HealthTest extends WP_UnitTestCase {
 	 * Tests that the credentials test returns a "good" status when credentials
 	 * are configured.
 	 *
-	 * @since x.x.x
+	 * @since 1.3.0
 	 */
 	public function test_credentials_test_returns_good_when_credentials_present(): void {
 		add_filter( 'wpai_has_ai_credentials', '__return_true' );
@@ -230,7 +236,7 @@ class Site_HealthTest extends WP_UnitTestCase {
 	 * Tests that the credentials test returns a "recommended" status when no
 	 * credentials are configured.
 	 *
-	 * @since x.x.x
+	 * @since 1.3.0
 	 */
 	public function test_credentials_test_returns_recommended_when_no_credentials(): void {
 		add_filter( 'wpai_has_ai_credentials', '__return_false' );
@@ -243,7 +249,7 @@ class Site_HealthTest extends WP_UnitTestCase {
 	/**
 	 * Tests that the credentials test result contains the required structure.
 	 *
-	 * @since x.x.x
+	 * @since 1.3.0
 	 */
 	public function test_credentials_test_result_has_required_structure(): void {
 		$result = $this->site_health->run_credentials_test();
@@ -259,7 +265,7 @@ class Site_HealthTest extends WP_UnitTestCase {
 	/**
 	 * Tests that the credentials test result badge is labelled "AI".
 	 *
-	 * @since x.x.x
+	 * @since 1.3.0
 	 */
 	public function test_credentials_test_badge_label_is_ai(): void {
 		$result = $this->site_health->run_credentials_test();

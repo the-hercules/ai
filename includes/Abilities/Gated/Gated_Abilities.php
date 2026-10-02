@@ -23,27 +23,27 @@ defined( 'ABSPATH' ) || exit;
  *
  * @internal
  *
- * @since x.x.x
+ * @since 1.3.0
  */
 final class Gated_Abilities {
 	/**
 	 * The default gated ability classes.
 	 *
-	 * @since x.x.x
+	 * @since 1.3.0
 	 *
 	 * @var array<class-string<\WordPress\AI\Abstracts\Abstract_Gated_Ability>>
 	 */
 	private const GATED_ABILITY_CLASSES = array( // phpcs:ignore SlevomatCodingStandard.Classes.DisallowMultiConstantDefinition -- This is used as an array const.
 		Post_Utilities::class,
 		Read_Settings::class,
-		Read_Users::class,
-		Read_Content::class,
+		Users_Query::class,
+		Content_Query::class,
 	);
 
 	/**
 	 * Gets all registered gated ability instances.
 	 *
-	 * @since x.x.x
+	 * @since 1.3.0
 	 *
 	 * @return array<int, \WordPress\AI\Abstracts\Abstract_Gated_Ability> The gated ability instances.
 	 */
@@ -54,7 +54,7 @@ final class Gated_Abilities {
 		 * Allows developers to add, remove, or replace the abilities gated behind
 		 * the Custom Abilities experiment.
 		 *
-		 * @since x.x.x
+		 * @since 1.3.0
 		 *
 		 * @param array<class-string<\WordPress\AI\Abstracts\Abstract_Gated_Ability>> $classes Gated ability class names.
 		 */
@@ -67,7 +67,7 @@ final class Gated_Abilities {
 				_doing_it_wrong(
 					__METHOD__,
 					esc_html__( 'Attempted to register an invalid gated ability. Gated abilities must be class-strings.', 'ai' ),
-					'x.x.x'
+					'1.3.0'
 				);
 				continue;
 			}
@@ -81,7 +81,7 @@ final class Gated_Abilities {
 				_doing_it_wrong(
 					__METHOD__,
 					esc_html__( 'Attempted to register an invalid gated ability. All gated abilities must extend Abstract_Gated_Ability.', 'ai' ),
-					'x.x.x'
+					'1.3.0'
 				);
 				continue;
 			}
@@ -97,7 +97,7 @@ final class Gated_Abilities {
 						esc_html( $item ),
 						esc_html( $e->getMessage() )
 					),
-					'x.x.x'
+					'1.3.0'
 				);
 				continue;
 			}

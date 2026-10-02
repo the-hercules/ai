@@ -1,6 +1,6 @@
 <?php
 /**
- * Gated ability: read content.
+ * Gated ability: content query.
  *
  * @package WordPress\AI\Abilities\Gated
  */
@@ -16,11 +16,11 @@ use WordPress\AI\Abstracts\Abstract_Gated_Ability;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Gates the core/read-content ability.
+ * Gates the core/content-query ability.
  *
- * @since x.x.x
+ * @since 1.3.0
  */
-final class Read_Content extends Abstract_Gated_Ability {
+final class Content_Query extends Abstract_Gated_Ability {
 	/**
 	 * {@inheritDoc}
 	 */

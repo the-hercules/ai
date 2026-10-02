@@ -42,8 +42,7 @@ class Editorial_NotesTest extends WP_UnitTestCase {
 		// Mock has_valid_ai_credentials to return true for tests.
 		add_filter( 'wpai_pre_has_valid_credentials_check', '__return_true' );
 
-		// Enable experiments globally and individually.
-		update_option( 'wpai_features_enabled', true );
+		// Enable the experiment.
 		update_option( 'wpai_feature_editorial-notes_enabled', true );
 
 		$registry = new Registry();
@@ -63,7 +62,6 @@ class Editorial_NotesTest extends WP_UnitTestCase {
 	 */
 	public function tearDown(): void {
 		wp_set_current_user( 0 );
-		delete_option( 'wpai_features_enabled' );
 		delete_option( 'wpai_feature_editorial-notes_enabled' );
 		delete_option( 'wp_ai_client_provider_credentials' );
 		remove_filter( 'wpai_pre_has_valid_credentials_check', '__return_true' );
@@ -119,7 +117,7 @@ class Editorial_NotesTest extends WP_UnitTestCase {
 	 * Tests that the wpai_note comment meta is registered with show_in_rest.
 	 *
 	 * @since 0.4.0
-	 * @since x.x.x Renamed test method name from `test_ai_note_comment_meta_is_registered`.
+	 * @since 1.3.0 Renamed test method name from `test_ai_note_comment_meta_is_registered`.
 	 */
 	public function test_wpai_note_comment_meta_is_registered() {
 		$registered = get_registered_meta_keys( 'comment' );
@@ -331,7 +329,7 @@ class Editorial_NotesTest extends WP_UnitTestCase {
 	 * Aborting in the rest_pre_insert_comment filter must prevent the row entirely.
 	 *
 	 * @since 1.1.0
-	 * @since x.x.x Renamed test method name from `test_subscriber_ai_note_request_is_rejected_and_persists_no_comment`
+	 * @since 1.3.0 Renamed test method name from `test_subscriber_ai_note_request_is_rejected_and_persists_no_comment`
 	 */
 	public function test_subscriber_wpai_note_request_is_rejected_and_persists_no_comment() {
 		do_action( 'rest_api_init', rest_get_server() );
